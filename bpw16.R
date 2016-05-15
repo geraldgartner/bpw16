@@ -142,7 +142,7 @@ topland <- ggplot(topland, aes(x=reorder(kandidat, prozent), y=prozent, fill=kan
   ggtitle("Wie die Dörfer gewählt hätten") 
 
 plot(topland)
-quartz.save("topland.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
+quartz.save("output/topland.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
 
 # ============================================================================ #
 # WENN NUR STÄDTISCHE REGIONEN GEWÄHLT HÄTTEN
@@ -176,22 +176,27 @@ topstadt <-
   ggtitle("Wie städtische Regionen gewählt hätten")
 
 plot(topstadt)
-quartz.save("topstadt.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
+quartz.save("output/topstadt.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
 
 
 # ============================================================================ #
 # WENN NUR top 10 studentengemeinden GEWÄHLT HÄTTEN
 # ==========================# ==========================# ==========================
 
-top_stud <- tbl_df(dem) %>% group_by(kandidat) %>% top_n()
+#Mergen der Sheets für weitere Analyse
+erwerb <- merge(wahlgang1, erwerbsstatus, by.x = "gkz", by.y = "gkz")
 
-topstadt <- top_stadt %>%
+
+top_stud <- tbl_df(erwerb) %>% group_by(kandidat) %>% top_n(n = 21, wt = hochschule_u_akademie/bildung_total) 
+
+
+topstud <- top_stud %>%
   group_by(kandidat) %>%
   summarise(Sumstimmen = sum(ergebnis), SumGueltig = sum(gueltig)) 
 
-topstadt$prozent <- c((topstadt$Sumstimmen/topstadt$SumGueltig))
+topstud$prozent <- c((topstud$Sumstimmen/topstud$SumGueltig))
 
-topstadt <- ggplot(topstadt, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
+topstud <- ggplot(topstud, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
   geom_bar(stat='identity') +
   coord_flip() +
   theme +
@@ -200,7 +205,34 @@ topstadt <- ggplot(topstadt, aes(x=reorder(kandidat, prozent), y=prozent, fill=k
   scale_fill_manual(values = kandidatenfarben) +
   guides(fill=FALSE) +
   geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1.1, color="white") +
-  ggtitle("Wie städtische Regionen gewählt hätten") 
+  ggtitle("Wie Gemeinden mit höchster Akademikerquote gewählt hätten") 
 
-plot(topstadt)
-quartz.save("topstadt.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
+plot(topstud)
+quartz.save("output/topstadt.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
+
+# ============================================================================ #
+# WENN NUR top 10 arbeitergemeinden GEWÄHLT HÄTTEN
+# ========================================================================
+
+top_arb <- tbl_df(erwerb) %>% group_by(kandidat) %>% top_n(n = 21, wt = pflichtschule/bildung_total) 
+
+
+toparb <- top_arb %>%
+  group_by(kandidat) %>%
+  summarise(Sumstimmen = sum(ergebnis), SumGueltig = sum(gueltig)) 
+
+toparb$prozent <- c((toparb$Sumstimmen/toparb$SumGueltig))
+
+toparb <- ggplot(toparb, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
+  geom_bar(stat='identity') +
+  coord_flip() +
+  theme +
+  scale_y_continuous(labels = percent) +
+  labs(x = "", y = "Anteil der Stimmen") +
+  scale_fill_manual(values = kandidatenfarben) +
+  guides(fill=FALSE) +
+  geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1.1, color="white") +
+  ggtitle("Wahlverhalten der Gemeinden mit höchster Pflichtschulquote") 
+
+plot(toparb)
+quartz.save("output/topstadt.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
