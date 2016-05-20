@@ -89,6 +89,8 @@ plot(asylchart)
 fit <- lm(demhofer$aslymaerz, demhofer$pct, data=demhofer)
 summary(fit)
 
+#Wie in Städten gewählt wird
+
 top_kand <- tbl_df(dem) %>% group_by(kandidat) %>% top_n(10, urban==1)
 
 topcity <- top_kand %>%
@@ -96,10 +98,6 @@ topcity <- top_kand %>%
   summarise(Sumstimmen = sum(ergebnis), SumGueltig = sum(gueltig)) 
 
 topcity$prozent <- c((topcity$Sumstimmen/topcity$SumGueltig))
-
-width=100 
-height=50 
-dpi = 96 
 
 topcity <- ggplot(topcity, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
   geom_bar(stat='identity') +
@@ -110,10 +108,12 @@ topcity <- ggplot(topcity, aes(x=reorder(kandidat, prozent), y=prozent, fill=kan
   scale_fill_manual(values = kandidatenfarben) +
   guides(fill=FALSE) +
   geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1.1, color="white") +
-  ggtitle("Wie Städte gewählt hätten") 
+  ggtitle("Wenn nur urbane Zentren gewählt hätten") +
+  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner"))
 
 plot(topcity)
-quartz.save("topcity.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
+quartz.save("topcity2.png", type = "png", height=15, width=30, dpi=96, antialias=TRUE)
+ggsave(plot=topcity, filename="topcity3.pdf")
 
 # Label richtigstellen oder daten umdrehen: scale_x_continous(labels = c("Hofer", "Van der Bellen", "Griss", "Hundstorfer", "Lugner", "Khol")) +
 
@@ -139,7 +139,8 @@ topland <- ggplot(topland, aes(x=reorder(kandidat, prozent), y=prozent, fill=kan
   scale_fill_manual(values = kandidatenfarben) +
   guides(fill=FALSE) +
   geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1.1, color="white") +
-  ggtitle("Wie die Dörfer gewählt hätten") 
+  ggtitle("Wie ländliche Regionen gewählt hätten") +
+  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner"))
 
 plot(topland)
 quartz.save("output/topland.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
@@ -173,7 +174,8 @@ topstadt <-
   guides(fill = FALSE) +
   geom_text(aes(label = paste(round(prozent * 100, 1), "%", sep = " ")), hjust = 1.1, color =
               "white") +
-  ggtitle("Wie städtische Regionen gewählt hätten")
+  ggtitle("Wie städtische Regionen gewählt hätten") +
+  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner"))
 
 plot(topstadt)
 quartz.save("output/topstadt.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
@@ -226,13 +228,15 @@ toparb$prozent <- c((toparb$Sumstimmen/toparb$SumGueltig))
 toparb <- ggplot(toparb, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
   geom_bar(stat='identity') +
   coord_flip() +
-  theme +
   scale_y_continuous(labels = percent) +
   labs(x = "", y = "Anteil der Stimmen") +
+  theme +
   scale_fill_manual(values = kandidatenfarben) +
   guides(fill=FALSE) +
   geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1.1, color="white") +
-  ggtitle("Wahlverhalten der Gemeinden mit höchster Pflichtschulquote") 
+  ggtitle("Wahlverhalten der Gemeinden mit höchster") +
+  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol",
+                            "hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner"))
 
 plot(toparb)
 quartz.save("output/topstadt.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
