@@ -7,6 +7,7 @@ library(git2r)
 library(formatR)
 library(scales)
 library(grid)
+library(extrafont)
 
 #Unser Style
 
@@ -18,12 +19,12 @@ theme <- theme(plot.background = element_rect(fill = "gray97"), panel.grid.major
   theme(axis.ticks = element_blank(), 
         axis.line = element_blank(),
         axis.title = element_text(vjust = 8), 
-        axis.text = element_text(family = "Georgia", 
-                                 size = 14, vjust = 0.25), 
         panel.background = element_rect(fill = "grey97", linetype = "solid"), 
         plot.background = element_rect(colour = "gray97"), 
         plot.title = element_text(hjust=0, margin=unit(c(0,1,0.2,1), "cm")), 
-        plot.margin = unit(c(1,0.5,0.5,0.5), "cm")) 
+        plot.margin = unit(c(1,0.5,0.5,0.5), "cm")) +
+    theme(axis.text=element_text(size=16))
+  
 
 #Parteifarben festlegen
 kandidatenfarben <- c("hofer" = "#7a8fcc","vdb" = "#548750","griss" = "#b398aa","hundstorfer" ="#b34848", "khol" = "#282828", "lugner" = "#bfb58e")
@@ -89,33 +90,7 @@ plot(asylchart)
 fit <- lm(demhofer$aslymaerz, demhofer$pct, data=demhofer)
 summary(fit)
 
-#Wie in Städten gewählt wird
 
-top_kand <- tbl_df(dem) %>% group_by(kandidat) %>% top_n(10, urban==1)
-
-topcity <- top_kand %>%
-  group_by(kandidat) %>%
-  summarise(Sumstimmen = sum(ergebnis), SumGueltig = sum(gueltig)) 
-
-topcity$prozent <- c((topcity$Sumstimmen/topcity$SumGueltig))
-
-topcity <- ggplot(topcity, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
-  geom_bar(stat='identity') +
-  coord_flip() +
-  theme +
-  scale_y_continuous(labels = percent) +
-  labs(x = "", y = "Anteil der Stimmen") +
-  scale_fill_manual(values = kandidatenfarben) +
-  guides(fill=FALSE) +
-  geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1.1, color="white") +
-  ggtitle("Wenn nur urbane Zentren gewählt hätten") +
-  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner"))
-
-plot(topcity)
-quartz.save("topcity2.png", type = "png", height=15, width=30, dpi=96, antialias=TRUE)
-ggsave(plot=topcity, filename="topcity3.pdf")
-
-# Label richtigstellen oder daten umdrehen: scale_x_continous(labels = c("Hofer", "Van der Bellen", "Griss", "Hundstorfer", "Lugner", "Khol")) +
 
 # ============================================================================ #
 # WENN NUR LÄNDLICHE REGIONEN GEWÄHLT HÄTTEN
@@ -143,6 +118,7 @@ topland <- ggplot(topland, aes(x=reorder(kandidat, prozent), y=prozent, fill=kan
   scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner"))
 
 plot(topland)
+
 quartz.save("output/topland.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
 
 # ============================================================================ #
