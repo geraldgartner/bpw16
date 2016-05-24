@@ -24,7 +24,7 @@ theme <- theme(plot.background = element_rect(fill = "gray97"), panel.grid.major
         axis.title = element_text(vjust = 8), 
         panel.background = element_rect(fill = "grey97", linetype = "solid"), 
         plot.background = element_rect(colour = "gray97"), 
-        plot.title = element_text(hjust=0, margin=unit(c(0,1,0.2,1), "cm")), 
+        plot.title = element_text(hjust=-1, margin=unit(c(0,1,0.2,1), "cm")), 
         plot.margin = unit(c(1,0.5,0.5,0.5), "cm")) +
   theme(axis.text=element_text(size=14))  
 
@@ -72,8 +72,7 @@ erwerbsstatus$arbeiter_pct <- erwerbsstatus$arbeiter/erwerbsstatus$erwerbstaetig
 erwerbsstatus$angestellte_pct <- erwerbsstatus$pflichtschule/erwerbsstatus$erwerbstaetig
 erwerbsstatus$selbststaendige_pct <- erwerbsstatus$pflichtschule/erwerbsstatus$erwerbstaetig
 
-
-pctdemografie <- demografie[ , c("gkz", "pctjunge","pctjunge_m", "pctjunge_w", "pctalte", "pctnotATstb")]
+pctdemografie <- demografie[ , c("gkz", "urban", "pctjunge","pctjunge_m", "pctjunge_w", "pctalte", "pctnotATstb")]
 pcterwerb <- erwerbsstatus [ , c("gkz", "pflichtschule_pct", "lehrabschluss_pct","mittlere_und_hoehere_schule_pct", "hochschule_u_akademie_pct", "arbeiter_pct", "angestellte_pct", "selbststaendige_pct" )]
 
 #Mergen der Sheets für weitere Analyse
@@ -121,6 +120,100 @@ round(demvdbcor, digits=2)
 erwerbvdbcor <- cor(erwerbvdbcor, use="pairwise.complete.obs")
 round(erwerbvdbcor, digits=2)
 
+# ============================================================================ #
+# WENN NUR LÄNDLICHE REGIONEN GEWÄHLT HÄTTEN
+# ============================================================================ #
 
 
+top_land <- tbl_df(dem) %>% group_by(kandidat) %>% top_n(10, urban==3)
+
+topland <- top_land %>%
+  group_by(kandidat) %>%
+  summarise(Sumstimmen = sum(ergebnis), SumGueltig = sum(gueltig)) 
+
+topland$prozent <- c((topland$Sumstimmen/topland$SumGueltig))
+
+width = 494*2.54/96
+height = 300*2.54/96
+dpi = 92
+
+topland <- ggplot(topland, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
+  geom_bar(stat='identity') +
+  coord_flip() +
+  theme +
+  scale_y_continuous(labels = percent) +
+  labs(x = "", y = "Anteil der Stimmen") +
+  scale_fill_manual(values = kandidatenfarben) +
+  guides(fill=FALSE) +
+  geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1, color="white") +
+  ggtitle("Wie ländliche Regionen gewählt hätten") +
+  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner")) 
+
+plot(topland)
+ggsave("topland.pdf", useDingbats=FALSE)
+
+# ============================================================================ #
+# WENN NUR URBANE ZENTREN GEWÄHLT HÄTTEN
+# ============================================================================ #
+
+
+top_urban <- tbl_df(dem) %>% group_by(kandidat) %>% top_n(10, urban==1)
+
+topurban <- top_urban %>%
+  group_by(kandidat) %>%
+  summarise(Sumstimmen = sum(ergebnis), SumGueltig = sum(gueltig)) 
+
+topurban$prozent <- c((topurban$Sumstimmen/topurban$SumGueltig))
+
+width = 494*2.54/96
+height = 300*2.54/96
+dpi = 92
+
+topurban <- ggplot(topurban, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
+  geom_bar(stat='identity') +
+  coord_flip() +
+  theme +
+  scale_y_continuous(labels = percent) +
+  labs(x = "", y = "Anteil der Stimmen") +
+  scale_fill_manual(values = kandidatenfarben) +
+  guides(fill=FALSE) +
+  geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1, color="white") +
+  ggtitle("Wie Großstädte gewählt hätten") +
+  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner")) 
+
+plot(topurban)
+ggsave("topurban.pdf", useDingbats=FALSE)
+
+
+# ============================================================================ #
+# WENN NUR STÄDTISCHE REGIONEN GEWÄHLT HÄTTEN
+# ============================================================================ #
+
+
+top_stadt <- tbl_df(dem) %>% group_by(kandidat) %>% top_n(10, urban==2)
+
+topstadt <- top_stadt %>%
+  group_by(kandidat) %>%
+  summarise(Sumstimmen = sum(ergebnis), SumGueltig = sum(gueltig)) 
+
+topstadt$prozent <- c((topstadt$Sumstimmen/topstadt$SumGueltig))
+
+width = 494*2.54/96
+height = 300*2.54/96
+dpi = 92
+
+topstadt <- ggplot(topstadt, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
+  geom_bar(stat='identity') +
+  coord_flip() +
+  theme +
+  scale_y_continuous(labels = percent) +
+  labs(x = "", y = "Anteil der Stimmen") +
+  scale_fill_manual(values = kandidatenfarben) +
+  guides(fill=FALSE) +
+  geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1, color="white") +
+  ggtitle("Wie städtische Regionen gewählt hätten") +
+  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner")) 
+
+plot(topstadt)
+ggsave("topstadt.pdf", useDingbats=FALSE)
 
