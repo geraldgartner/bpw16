@@ -14,7 +14,7 @@ library(extrafont)
 
 theme <- theme(plot.background = element_rect(fill = "gray97"), panel.grid.major = element_line(colour = "gray86", linetype = "dotted"), 
                panel.grid.minor = element_line(colour = "gray86", linetype = "dotted")) + 
-  theme(plot.title = element_text(size = 22, face = "bold"), 
+  theme(plot.title = element_text(size = 18, face = "bold"), 
         plot.background = element_rect(fill = "gray97", colour = "antiquewhite", size = 10, linetype = "solid")) +
   theme(axis.ticks = element_blank(), 
         axis.line = element_blank(),
@@ -23,7 +23,7 @@ theme <- theme(plot.background = element_rect(fill = "gray97"), panel.grid.major
         plot.background = element_rect(colour = "gray97"), 
         plot.title = element_text(hjust=0, margin=unit(c(0,1,0.2,1), "cm")), 
         plot.margin = unit(c(1,0.5,0.5,0.5), "cm")) +
-    theme(axis.text=element_text(size=16))
+    theme(axis.text=element_text(size=14))  
   
 
 #Parteifarben festlegen
@@ -105,6 +105,10 @@ topland <- top_land %>%
 
 topland$prozent <- c((topland$Sumstimmen/topland$SumGueltig))
 
+width = 494*2.54/96
+height = 300*2.54/96
+dpi = 92
+
 topland <- ggplot(topland, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
   geom_bar(stat='identity') +
   coord_flip() +
@@ -113,13 +117,13 @@ topland <- ggplot(topland, aes(x=reorder(kandidat, prozent), y=prozent, fill=kan
   labs(x = "", y = "Anteil der Stimmen") +
   scale_fill_manual(values = kandidatenfarben) +
   guides(fill=FALSE) +
-  geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1.1, color="white") +
+  geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1, color="white") +
   ggtitle("Wie ländliche Regionen gewählt hätten") +
-  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner"))
+  scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner")) 
 
 plot(topland)
+ggsave("topland.pdf", useDingbats=FALSE)
 
-quartz.save("output/topland.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
 
 # ============================================================================ #
 # WENN NUR STÄDTISCHE REGIONEN GEWÄHLT HÄTTEN
@@ -154,7 +158,7 @@ topstadt <-
   scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner"))
 
 plot(topstadt)
-quartz.save("output/topstadt.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
+quartz.save("topstadt.png", type = "png", height=height/dpi, width=width/dpi, dpi=dpi, antialias=TRUE)
 
 
 # ============================================================================ #
