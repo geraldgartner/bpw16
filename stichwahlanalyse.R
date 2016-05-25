@@ -31,7 +31,7 @@ theme <- theme(plot.background = element_rect(fill = "gray97"), panel.grid.major
 
 #Parteifarben festlegen
 kandidatenfarben <- c("hofer" = "#7a8fcc","vdb" = "#548750","griss" = "#b398aa","hundstorfer" ="#b34848", "khol" = "#282828", "lugner" = "#bfb58e")
-
+kandidaten <- c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner" = "Lugner")
 
 library("googlesheets")
 suppressPackageStartupMessages(library("dplyr"))
@@ -126,16 +126,16 @@ round(erwerbvdbcor, digits=2)
 
 arbeiterplot <- ggplot(erwerb, aes(x=arbeiter_pct, y=pct, colour=kandidat)) +
       geom_point(alpha=1/4) + 
-      facet_grid(. ~ kandidat) +
+      facet_grid(kandidat ~ ., labeller=labeller(.default=kandidaten)) +
       geom_smooth(method=lm)  +
       scale_y_continuous(labels = percent) +
       scale_x_continuous(labels = percent) +
       labs(x = "Stimmenanteil", y = "Anteil der Arbeiter") +
-      ggtitle("Wie ländliche Regionen gewählt hätten") +
+      ggtitle("Je mehr Arbeiter, \ndesto mehr Hofer-Wähler") +
       guides(fill=FALSE) +
-      scale_fill_manual(values = kandidatenfarben) +
-      theme(strip.text.x = element_text(size=12), strip.background = element_rect(colour="red", fill="#CCCCFF"))+
-  theme
+      scale_fill_manual(values = c("hofer"="#9999999", "Van der Bellen"="#56B4E9")) +
+      theme(strip.text.x = element_text(size=12), strip.background = element_rect(colour="grey86", linetype = "dotted", fill="grey97"),legend.position="none") +
+      theme
   plot(arbeiterplot)
 
 # ============================================================================ #
