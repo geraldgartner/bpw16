@@ -133,7 +133,7 @@ arbeiterplot <- ggplot(erwerb, aes(x=arbeiter_pct, y=pct, colour=kandidat)) +
       labs(x = "Stimmenanteil", y = "Anteil der Arbeiter") +
       ggtitle("Je mehr Arbeiter, \ndesto mehr Hofer-Wähler") +
       guides(fill=FALSE) +
-      scale_fill_manual(values = c("hofer"="#9999999", "Van der Bellen"="#56B4E9")) +
+      scale_colour_manual(values = c("hofer"="#99999", "Van der Bellen"="#56B4E9")) +
       theme(strip.text.x = element_text(size=12), strip.background = element_rect(colour="grey86", linetype = "dotted", fill="grey97"),legend.position="none") +
       theme
   plot(arbeiterplot)
