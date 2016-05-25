@@ -107,11 +107,11 @@ round(erwerbhofercor, digits=2)
 #BESSERE FARBPALETTE
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 corrplot(demhofercor, method="shade", shade.col=NA, tl.col="black", tl.srt=45,
-         col=col(200), addCoef.col="black", addcolorlabel="no", order="AOE")
+         col=col(200), addCoef.col="black",order="AOE")
 
 as.matrix(as.data.frame(erwerbhofercor))
 corrplot(erwerbhofercor, method="shade", shade.col=NA, tl.col="black", tl.srt=45,
-         col=col(200), addCoef.col="black", addcolorlabel="no", order="AOE")
+         col=col(200), addCoef.col="black", order="AOE")
 
 #KORRELATIONEN-MATRIX FÜR VDB
 demvdbcor <- cor(demvdbcor)
@@ -167,7 +167,7 @@ top_land <- ggplot(topland, aes(x=reorder(kandidat, prozent), y=prozent, fill=ka
   ggtitle("Wie ländliche Regionen gewählt hätten") +
   scale_x_discrete(labels=c("hofer" = "Hofer", "khol" = "Khol","hundstorfer" = "Hundstorfer", "griss" = "Griss", "vdb" = "Van der Bellen", "lugner", "lugner" = "Lugner")) 
 
-plot(topland)
+plot(top_land)
 ggsave("topland.pdf", useDingbats=FALSE)
 
 # ============================================================================ #
