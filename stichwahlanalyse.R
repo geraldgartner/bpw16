@@ -17,16 +17,16 @@ library(corrplot)
 
 theme <- theme(plot.background = element_rect(fill = "gray97"), panel.grid.major = element_line(colour = "gray86", linetype = "dotted"), 
                panel.grid.minor = element_line(colour = "gray86", linetype = "dotted")) + 
-  theme(plot.title = element_text(size = 18, face = "bold"), 
+  theme(plot.title = element_text(size = 22, face = "bold"), 
         plot.background = element_rect(fill = "gray97", colour = "antiquewhite", size = 10, linetype = "solid")) +
   theme(axis.ticks = element_blank(), 
         axis.line = element_blank(),
         axis.title = element_text(vjust = 8), 
         panel.background = element_rect(fill = "grey97", linetype = "solid"), 
         plot.background = element_rect(colour = "gray97"), 
-        plot.title = element_text(hjust=-1, margin=unit(c(0,1,0.2,1), "cm")), 
+        plot.title = element_text(hjust=0, margin=unit(c(0,1,0.2,1), "cm")), 
         plot.margin = unit(c(1,0.5,0.5,0.5), "cm")) +
-  theme(axis.text=element_text(size=14))  
+  theme(axis.text=element_text(size=16))  
 
 
 #Parteifarben festlegen
@@ -121,6 +121,24 @@ erwerbvdbcor <- cor(erwerbvdbcor, use="pairwise.complete.obs")
 round(erwerbvdbcor, digits=2)
 
 # ============================================================================ #
+# SCATTERPLOTTS DER BEZIEHUNGEN
+# ============================================================================ #
+
+arbeiterplot <- ggplot(erwerb, aes(x=arbeiter_pct, y=pct, colour=kandidat)) +
+      geom_point(alpha=1/4) + 
+      facet_grid(. ~ kandidat) +
+      geom_smooth(method=lm)  +
+      scale_y_continuous(labels = percent) +
+      scale_x_continuous(labels = percent) +
+      labs(x = "Stimmenanteil", y = "Anteil der Arbeiter") +
+      ggtitle("Wie ländliche Regionen gewählt hätten") +
+      guides(fill=FALSE) +
+      scale_fill_manual(values = kandidatenfarben) +
+      theme(strip.text.x = element_text(size=12), strip.background = element_rect(colour="red", fill="#CCCCFF"))+
+  theme
+  plot(arbeiterplot)
+
+# ============================================================================ #
 # WENN NUR LÄNDLICHE REGIONEN GEWÄHLT HÄTTEN
 # ============================================================================ #
 
@@ -137,7 +155,7 @@ width = 494*2.54/96
 height = 300*2.54/96
 dpi = 92
 
-topland <- ggplot(topland, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
+top_land <- ggplot(topland, aes(x=reorder(kandidat, prozent), y=prozent, fill=kandidat)) +
   geom_bar(stat='identity') +
   coord_flip() +
   theme +
@@ -174,7 +192,7 @@ topurban <- ggplot(topurban, aes(x=reorder(kandidat, prozent), y=prozent, fill=k
   coord_flip() +
   theme +
   scale_y_continuous(labels = percent) +
-  labs(x = "", y = "Anteil der Stimmen") +
+  labs(x = "", y = "Anteil der Stimmen") + 
   scale_fill_manual(values = kandidatenfarben) +
   guides(fill=FALSE) +
   geom_text(aes(label = paste(round(prozent*100,1),"%",sep=" ")), hjust= 1, color="white") +
