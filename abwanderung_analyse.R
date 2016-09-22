@@ -1,6 +1,6 @@
-
-
+library("dplyr")
 library("googlesheets")
+library("httr")
 suppressPackageStartupMessages(library("dplyr"))
 
 gemeindedaten <- gs_key('1Lt137MmgPGeJugRguErIDNqjRbZojNsWWmUPTTOUPgs')
@@ -9,6 +9,7 @@ abwanderung <- gs_read(gemeindedaten, ws = 'abwanderung', col_names = TRUE)
 
 
 abwanderung$HOFPCT = as.numeric(gsub(",",".",abwanderung$HOF))*100
+abwanderung$VDBPCT = as.numeric(gsub(",",".",abwanderung$VDB))*100
 abwanderung$ABWPCT = as.numeric(gsub(",",".",abwanderung$"16vs06"))
 
 
@@ -40,4 +41,9 @@ print(summary(lm(abwerwerb$HOFPCT ~ abwerwerb$ABWPCT + factor(abwerwerb$urban) +
 print(summary(lm(abwerwerb$HOFPCT ~ abwerwerb$ABWPCT + factor(abwerwerb$urban) + abwerwerb$pflichtschule_pct)))
 
 print(summary(lm(abwerwerb$HOFPCT ~ abwerwerb$ABWPCT + factor(abwerwerb$urban) + abwerwerb$hochschule_u_akademie_pct)))
+
+#Neue Berechnungen für Andi
+print(summary(lm(abwerwerb$HOFPCT ~ abwerwerb$pflichtschule_pct + factor(abwerwerb$urban) + abwerwerb$arbeiter_pct)))
+print(summary(lm(abwerwerb$VDBPCT ~ abwerwerb$hochschule_u_akademie_pct + factor(abwerwerb$urban) + abwerwerb$angestellte_pct)))
+
 
